@@ -15,8 +15,8 @@ export async function POST(
     if (!webhookUrl || !webhookUrl.startsWith('http')) {
       return NextResponse.json({
         ok: false,
-        error: 'GOOGLE_SHEET_WEBHOOK_URL ยังไม่ได้ตั้งค่าใน Vercel หรือ .env.local',
-        hint: 'กรุณานำ Web app URL จาก Apps Script (ที่ลงท้ายด้วย /exec) ไปใส่ใน Vercel Environment Variables แล้วกด Redeploy',
+        error: 'ยังไม่ได้กด Redeploy ใน Vercel: หลังเพิ่มตัวแปร GOOGLE_SHEET_WEBHOOK_URL ต้องกดปุ่ม [Redeploy] ใน Vercel 1 ครั้งก่อน เพื่อให้เซิร์ฟเวอร์เปิดรับค่าใหม่ครับ',
+        hint: 'ไปที่หน้า Vercel -> Deployments -> กด ... ที่ตัวล่าสุด -> กด Redeploy แล้วกลับมากดปุ่มนี้อีกทีได้เลยครับ',
       }, { status: 400 });
     }
 

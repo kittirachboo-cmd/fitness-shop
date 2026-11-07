@@ -13,8 +13,8 @@ export async function GET(req: NextRequest) {
   if (!webhookUrl) {
     return NextResponse.json({
       ok: false,
-      message: 'GOOGLE_SHEET_WEBHOOK_URL ยังไม่ได้ตั้งค่าใน .env.local หรือ Vercel',
-      hint: 'กรุณาสร้าง Google Sheet และนำ URL จาก Apps Script (Web app URL) มาใส่ในไฟล์ .env.local',
+      message: 'ยังไม่ได้กด Redeploy ใน Vercel เพื่อโหลดค่า GOOGLE_SHEET_WEBHOOK_URL',
+      hint: 'ให้ไปที่ Vercel -> Deployments -> กด ... ตัวล่าสุด -> เลือก Redeploy',
       owner_email: process.env.OWNER_NOTIFY_EMAIL || 'kittirach.boo@tsn.thai-tech.ac.th',
     });
   }
