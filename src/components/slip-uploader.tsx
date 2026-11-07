@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Upload, CheckCircle2, AlertCircle, FileImage, RefreshCw } from 'lucide-react';
+import { Upload, CheckCircle2, AlertCircle, FileImage, RefreshCw, Sheet, FlaskConical } from 'lucide-react';
 
 interface SlipUploaderProps {
   orderId: string;
@@ -12,6 +12,8 @@ interface SlipUploaderProps {
   total: number;
   initialStatus: string;
   initialSlipUrl?: string;
+  currentAmount?: number;
+  isTestMode?: boolean;
 }
 
 export function SlipUploader({
@@ -22,13 +24,19 @@ export function SlipUploader({
   total,
   initialStatus,
   initialSlipUrl,
+  currentAmount,
+  isTestMode = false,
 }: SlipUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialSlipUrl || null);
   const [uploading, setUploading] = useState(false);
+  const [resyncing, setResyncing] = useState(false);
   const [status, setStatus] = useState(initialStatus);
   const [message, setMessage] = useState('');
+  const [sheetSynced, setSheetSynced] = useState<boolean | null>(null);
   const [error, setError] = useState('');
+
+  const effectiveTotal = isTestMode ? (currentAmount || 1) : total;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
@@ -65,7 +73,7 @@ export function SlipUploader({
       formData.append('order_no', String(orderNo));
       formData.append('customer_name', customerName);
       formData.append('phone', phone);
-      formData.append('total', String(total));
+      formData.append('total', String(effectiveTotal));
 
       const res = await fetch(`/api/orders/${orderId}/slip`, {
         method: 'POST',
@@ -78,7 +86,8 @@ export function SlipUploader({
       }
 
       setStatus('รอตรวจสลิป');
-      setMessage('✅ แนบสลิปเรียบร้อยแล้ว! ข้อมูลถูกส่งเข้า Google Sheet แจ้งเตือนเจ้าของร้านแล้วครับ');
+      setMessage(data.message || 'แนบสลิปเรียบร้อยแล้ว');
+      setSheetSynced(Boolean(data.sheet_synced));
       if (data.slip_url) {
         setPreviewUrl(data.slip_url);
       }
@@ -87,6 +96,40 @@ export function SlipUploader({
       setError(msg);
     } finally {
       setUploading(false);
+    }
+  };
+
+  // ปุ่มกดส่งเข้า Google Sheet อีกครั้ง (สำหรับกรณีที่เพิ่งไปใส่ Webhook ใน Vercel)
+  const handleResyncSheet = async () => {
+    setResyncing(true);
+    setError('');
+    try {
+      const res = await fetch(`/api/orders/${orderId}/resync-sheet`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_no: orderNo,
+          customer_name: customerName,
+          phone,
+          total: effectiveTotal,
+          test_amount: isTestMode ? effectiveTotal : undefined,
+          status: 'รอตรวจสลิป',
+          slip_url: previewUrl,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || data.message || 'ซิงค์เข้าชีตไม่สำเร็จ');
+      }
+
+      setSheetSynced(true);
+      setMessage(data.message || '✅ ส่งข้อมูลเข้า Google Sheet สำเร็จแล้ว!');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
+    } finally {
+      setResyncing(false);
     }
   };
 
@@ -99,7 +142,13 @@ export function SlipUploader({
             <span>แนบหลักฐานการโอนเงิน (สลิป)</span>
           </h3>
           <p className="text-xs text-slate-400 mt-0.5">
-            เมื่อแนบสลิปแล้ว ระบบจะเขียนอัปเดตลง Google Sheet ของร้านทันที
+            {isTestMode ? (
+              <span className="text-amber-400 font-semibold flex items-center gap-1">
+                <FlaskConical className="w-3.5 h-3.5" /> โหมดทดสอบ: ยอดสลิป 1.00 บาท
+              </span>
+            ) : (
+              'เมื่อแนบสลิปแล้ว ระบบจะเขียนอัปเดตลง Google Sheet ของร้านทันที'
+            )}
           </p>
         </div>
         <span
@@ -114,9 +163,26 @@ export function SlipUploader({
       </div>
 
       {message && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/70 border border-emerald-800 text-emerald-300 text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
-          <span>{message}</span>
+        <div
+          className={`p-3.5 rounded-xl border text-xs flex items-start gap-2 ${
+            sheetSynced
+              ? 'bg-emerald-950/70 border-emerald-800 text-emerald-300'
+              : 'bg-amber-950/70 border-amber-800 text-amber-300'
+          }`}
+        >
+          {sheetSynced ? (
+            <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400 mt-0.5" />
+          ) : (
+            <AlertCircle className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" />
+          )}
+          <div className="space-y-1">
+            <span>{message}</span>
+            {sheetSynced === false && (
+              <p className="text-[11px] text-slate-400">
+                หากเพิ่งนำ Webhook URL ไปใส่ใน Vercel ให้กดปุ่ม <strong>&quot;ส่งเข้า Google Sheet อีกครั้ง&quot;</strong> ด้านล่างได้เลยครับ
+              </p>
+            )}
+          </div>
         </div>
       )}
 
@@ -184,7 +250,29 @@ export function SlipUploader({
             ) : (
               <>
                 <Upload className="w-4 h-4" />
-                <span>ยืนยันการแนบสลิปนี้</span>
+                <span>ยืนยันการแนบสลิปนี้ (ยอด {effectiveTotal} บ.)</span>
+              </>
+            )}
+          </button>
+        )}
+
+        {/* ปุ่มลองซิงค์เข้าชีตอีกครั้งสำหรับออเดอร์นี้ */}
+        {previewUrl && (
+          <button
+            type="button"
+            onClick={handleResyncSheet}
+            disabled={resyncing}
+            className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 font-semibold text-xs flex items-center justify-center gap-2 transition border border-slate-700/80 disabled:opacity-50"
+          >
+            {resyncing ? (
+              <>
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                <span>กำลังซิงค์เข้า Google Sheet...</span>
+              </>
+            ) : (
+              <>
+                <Sheet className="w-3.5 h-3.5 text-emerald-400" />
+                <span>🔄 ส่งข้อมูลออเดอร์และสลิปนี้เข้า Google Sheet</span>
               </>
             )}
           </button>

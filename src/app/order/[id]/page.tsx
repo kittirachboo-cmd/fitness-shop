@@ -17,7 +17,7 @@ import {
   Sheet
 } from 'lucide-react';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
-import { SlipUploader } from '@/components/slip-uploader';
+import { OrderPaymentClient } from '@/components/order-payment-client';
 import { Order } from '@/lib/types';
 
 interface OrderPageProps {
@@ -147,64 +147,15 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        {/* Left Column: PromptPay Payment Card */}
-        <div className="md:col-span-6 space-y-6">
-          <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 text-center space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold">
-              <QrCode className="w-4 h-4" />
-              <span>สแกนจ่ายผ่านพร้อมเพย์ (PromptPay)</span>
-            </div>
-
-            {/* QR Code Container */}
-            {qrDataUrl && (
-              <div className="p-4 bg-white rounded-2xl max-w-[260px] mx-auto shadow-xl">
-                <div className="relative aspect-square w-full">
-                  <Image
-                    src={qrDataUrl}
-                    alt="PromptPay QR Code"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <div className="mt-2 pt-2 border-t border-slate-200 text-center">
-                  <span className="text-xs font-bold text-slate-900 block">
-                    ยอดชำระ ฿{order.total.toLocaleString()} บาท
-                  </span>
-                  <span className="text-[10px] text-slate-500 font-mono">
-                    ID: {promptpayId}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Bank Transfer Details */}
-            <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 text-left text-xs space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">ธนาคาร:</span>
-                <span className="font-bold text-white">{bankName}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">เลขที่บัญชี:</span>
-                <span className="font-mono font-bold text-emerald-400 text-sm">
-                  {bankAccount}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">ชื่อบัญชี:</span>
-                <span className="font-bold text-white">{accountName}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Slip Uploader Component */}
-          <SlipUploader
-            orderId={order.id}
-            orderNo={order.order_no}
-            customerName={order.customer_name}
-            phone={order.phone}
-            total={order.total}
-            initialStatus={order.status}
-            initialSlipUrl={order.slip_url}
+        {/* Left Column: Interactive PromptPay & Slip Uploader */}
+        <div className="md:col-span-6">
+          <OrderPaymentClient
+            order={order}
+            promptpayId={promptpayId}
+            bankName={bankName}
+            bankAccount={bankAccount}
+            accountName={accountName}
+            initialQrUrl={qrDataUrl}
           />
         </div>
 

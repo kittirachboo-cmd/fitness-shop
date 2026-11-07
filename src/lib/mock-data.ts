@@ -310,6 +310,34 @@ export const MOCK_PRODUCTS: Product[] = [
     rating: 4.8,
     reviews_count: 53,
     sort_order: 10
+  },
+  {
+    id: 11,
+    slug: 'test-payment-1-baht',
+    name: '🧪 สินค้าทดสอบระบบชำระเงิน (1.00 บาท)',
+    category: 'accessories',
+    category_name: 'อุปกรณ์เสริม',
+    price: 1,
+    original_price: 10,
+    stock: 999,
+    image_url: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=800&q=80',
+    description: 'สำหรับทดสอบสั่งซื้อ โอนเงิน 1 บาท ผ่าน QR พร้อมเพย์จริง และทดสอบการส่งข้อมูลแจ้งเตือนเข้า Google Sheet โดยไม่ต้องโอนยอดเต็มหลายพันบาท',
+    specs: {
+      'ประเภท': 'ไอเทมสำหรับทดสอบระบบ',
+      'ราคา': '1.00 บาท (ฟรีค่าจัดส่ง)',
+      'วัตถุประสงค์': 'ทดลองสแกนจ่ายจริงและตรวจสอบสลิป'
+    },
+    features: [
+      'ยอดเงินเพียง 1.00 บาท เพื่อความสะดวกในการทดสอบ',
+      'สร้าง QR Code พร้อมเพย์ตามจริง สแกนผ่านแอปธนาคารได้ทันที',
+      'ทดสอบการซิงค์เข้า Google Sheet และแจ้งเตือนเมล'
+    ],
+    warranty: 'ทดสอบระบบ',
+    is_featured: false,
+    is_active: true,
+    rating: 5.0,
+    reviews_count: 99,
+    sort_order: 11
   }
 ];
 

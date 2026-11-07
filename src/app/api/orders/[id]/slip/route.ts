@@ -72,21 +72,40 @@ export async function POST(
     }
 
     // 3. ส่งข้อมูลไปอัปเดตช่องสลิปใน Google Sheet + อีเมลแจ้งเตือนเจ้าของร้าน
-    sendToGoogleSheet({
-      action: 'slip',
-      order_id: id,
-      order_no: orderNo || '---',
-      customer_name: customerName || 'ลูกค้า',
-      phone: phone || '-',
-      total: Number(total || 0),
-      status: 'รอตรวจสลิป',
-      slip_url: slipUrl,
-      slip_result: 'แนบสลิปเรียบร้อย รอเจ้าของร้านตรวจสอบ',
-    }).catch((e) => console.error('Failed to notify sheet on slip upload:', e));
+    const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
+    let sheetSynced = false;
+    let sheetError = '';
+
+    if (webhookUrl && webhookUrl.startsWith('http')) {
+      try {
+        const sheetRes = await sendToGoogleSheet({
+          action: 'slip',
+          order_id: id,
+          order_no: orderNo || '---',
+          customer_name: customerName || 'ลูกค้า',
+          phone: phone || '-',
+          total: Number(total || 0),
+          status: 'รอตรวจสลิป',
+          slip_url: slipUrl,
+          slip_result: 'แนบสลิปเรียบร้อย รอเจ้าของร้านตรวจสอบ',
+        });
+        sheetSynced = sheetRes.ok;
+        if (!sheetRes.ok) sheetError = sheetRes.error || '';
+      } catch (e) {
+        console.error('Failed to notify sheet on slip upload:', e);
+      }
+    }
+
+    const message = sheetSynced
+      ? '✅ แนบสลิปสำเร็จ! ข้อมูลถูกบันทึกลง Google Sheet และแจ้งเตือนเจ้าของร้านแล้ว'
+      : (webhookUrl
+          ? `แนบสลิปแล้ว แต่เชื่อมต่อ Google Sheet ไม่สำเร็จ: ${sheetError}`
+          : '⚠️ แนบสลิปสำเร็จ! แต่ยังไม่ได้ตั้งค่า GOOGLE_SHEET_WEBHOOK_URL ใน Vercel ข้อมูลจึงยังไม่เด้งเข้าชีต');
 
     return NextResponse.json({
       ok: true,
-      message: 'อัปโหลดสลิปเรียบร้อยแล้ว ร้านค้าจะตรวจสอบและเตรียมจัดส่งให้ทันที',
+      message,
+      sheet_synced: sheetSynced,
       slip_url: slipUrl,
       status: 'รอตรวจสลิป',
     });

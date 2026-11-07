@@ -85,7 +85,8 @@ export async function POST(req: NextRequest) {
       itemsTextArr.push(`- ${prod.name} x ${qty} (${lineTotal.toLocaleString()} บ.)`);
     }
 
-    const shippingFee = subtotal >= 1500 ? 0 : 100;
+    const isTestOnly = orderItemsSnapshot.length > 0 && orderItemsSnapshot.every((i) => i.price === 1);
+    const shippingFee = (subtotal >= 1500 || isTestOnly) ? 0 : 100;
     const total = subtotal + shippingFee;
 
     let orderId = `ord-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
