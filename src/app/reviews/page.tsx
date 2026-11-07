@@ -4,18 +4,26 @@ import React, { useState, useEffect } from 'react';
 import { Star, MessageSquare, Check, Sparkles, Sheet, Dumbbell } from 'lucide-react';
 import { Review, Product } from '@/lib/types';
 import { MOCK_REVIEWS, MOCK_PRODUCTS } from '@/lib/mock-data';
+import { useAuth } from '@/lib/auth-context';
 
 export default function ReviewsPage() {
+  const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>(MOCK_REVIEWS);
   const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
 
   // Form State
   const [selectedProductId, setSelectedProductId] = useState<number>(MOCK_PRODUCTS[0]?.id || 1);
-  const [customerName, setCustomerName] = useState('');
+  const [customerName, setCustomerName] = useState(user?.name || '');
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (user && !customerName) {
+      setCustomerName(user.name);
+    }
+  }, [user]);
 
   useEffect(() => {
     // โหลดรีวิวจาก API

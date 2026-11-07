@@ -124,12 +124,12 @@ git push -u origin main
 
 | Key | ค่าตัวอย่าง | คำอธิบาย |
 |---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://xxxx.supabase.co` | URL ของ Supabase Project |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://fmzczuzwlamwjqufjecd.supabase.co` | URL ของ Supabase Project |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `eyJhbGci...` | Anon Key ของ Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | `eyJhbGci...` | Service Role Key ของ Supabase |
-| `PROMPTPAY_ID` | `0891234567` | เบอร์พร้อมเพย์ 10 หลัก หรือเลขบัตร 13 หลัก |
+| `PROMPTPAY_ID` | `0937586699` | เบอร์พร้อมเพย์รับเงินของร้าน |
 | `SHOP_BANK_NAME` | `ธนาคารกสิกรไทย (KBANK)` | ชื่อธนาคารร้าน |
-| `SHOP_BANK_ACCOUNT` | `123-2-88990-1` | เลขที่บัญชีธนาคารร้าน |
+| `SHOP_BANK_ACCOUNT` | `1631051061` | เลขที่บัญชีธนาคารกสิกรไทย |
 | `SHOP_ACCOUNT_NAME` | `ร้านอุปกรณ์ออกกำลังกาย IRONPULSE` | ชื่อบัญชี |
 | `GOOGLE_SHEET_WEBHOOK_URL` | `https://script.google.com/macros/s/AKfycb.../exec` | Web app URL จาก Apps Script |
 | `GOOGLE_SHEET_SECRET` | `ironpulse_secret_key_fitgear_2026` | รหัสลับตรงกับใน Code.gs |
@@ -139,13 +139,26 @@ git push -u origin main
 
 ---
 
+## 🔐 การตั้งค่า Google OAuth ใน Supabase (สำหรับการล็อกอินด้วย Google)
+
+ระบบมีปุ่มและหน้าต่างย้ำเตือนให้ลูกค้าเข้าสู่ระบบด้วย Google ทุกครั้งที่เข้าเว็บเพื่อป้องกันออเดอร์สับสน
+หากต้องการเปิดใช้งาน Google Login จริง:
+1. เข้า **Google Cloud Console** -> สร้าง OAuth 2.0 Client ID (ประเภท Web Application)
+2. ในช่อง **Authorized redirect URIs** ให้ใส่:
+   `https://fmzczuzwlamwjqufjecd.supabase.co/auth/v1/callback`
+3. เข้า [Supabase Dashboard](https://supabase.com/dashboard) -> ไปที่โปรเจกต์ของคุณ -> **Authentication** -> **Providers** -> เลือก **Google** -> สับสวิตช์เป็น **Enabled**
+4. นำ **Client ID** และ **Client Secret** จาก Google Cloud Console มาวาง แล้วกด **Save**
+*(ระบบเว็บได้ทำระบบสำรอง Demo Google Account ไว้ให้แล้ว สามารถทดสอบคลิกเข้าสู่ระบบและสั่งซื้อได้ทันทีแม้ยังไม่ได้เปิด Google Provider)*
+
+---
+
 ## 🌟 หน้าเว็บหลักของระบบ
 
 - `/` — หน้าแรก: แบนเนอร์ดีไซน์สปอร์ต, หมวดหมู่อุปกรณ์, สินค้าขายดี, รีวิวจากลูกค้า, ข้อมูลร้าน
 - `/products` — แคตตาล็อกสินค้าทั้งหมด: กรองตามหมวดหมู่, ค้นหาตามชื่อ, เรียงลำดับราคา/คะแนนรีวิว
 - `/products/[slug]` — หน้ารายละเอียดสินค้า: รูปภาพ, สเปกทางเทคนิค, เช็คสต็อก, เพิ่มลงตะกร้า, รีวิวจากผู้ใช้, ฟอร์มเขียนรีวิว
-- `/cart` — ตะกร้าสินค้า & สั่งซื้อ: ปรับจำนวน, คำนวณค่าส่งฟรี (ครบ 1,500 บ.), ฟอร์มที่อยู่จัดส่ง
-- `/order/[id]` — หน้าสรุปออเดอร์ & จ่ายเงิน: QR พร้อมเพย์ยอดตรงตามบิล, ข้อมูลโอนธนาคาร, ช่องแนบสลิปพร้อมพรีวิว
+- `/cart` — ตะกร้าสินค้า & สั่งซื้อ: ปรับจำนวน, คำนวณค่าส่งฟรี (ครบ 1,500 บ.), ฟอร์มที่อยู่จัดส่ง, บัตรแจ้งเตือนเข้าสู่ระบบ Google
+- `/order/[id]` — หน้าสรุปออเดอร์ & จ่ายเงิน: QR พร้อมเพย์ยอดตรงตามบิล (เบอร์ 0937586699), ธนาคารกสิกร 1631051061, ช่องแนบสลิปพร้อมพรีวิว
 - `/reviews` — หน้ารวมรีวิวลูกค้า: สรุปคะแนนดาวเฉลี่ย, ฟีดรีวิว, ฟอร์มส่งรีวิวซิงค์เข้า Google Sheet
 - `/contact` — ขอคำปรึกษา / ติดต่อกลับ: ฟอร์มขอคำปรึกษาจัด Home Gym, ขอใบเสนอราคาองค์กร ซิงค์เข้า Google Sheet แท็บ "ติดต่อลูกค้ากลับ"
 
@@ -155,4 +168,4 @@ git push -u origin main
 หากมีข้อสงสัยเพิ่มเติม สามารถสอบถามได้ที่:
 - **อีเมลเจ้าของระบบ:** `kittirach.boo@tsn.thai-tech.ac.th`
 - **LINE:** `@ironpulse`
-- **โทร:** `089-123-4567`
+- **โทร:** `093-758-6699`

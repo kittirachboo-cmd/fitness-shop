@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Product, Review } from '@/lib/types';
 import { useCart } from '@/lib/cart-context';
+import { useAuth } from '@/lib/auth-context';
 
 interface ProductDetailViewProps {
   product: Product;
@@ -26,6 +27,7 @@ interface ProductDetailViewProps {
 
 export function ProductDetailView({ product, initialReviews }: ProductDetailViewProps) {
   const { addItem } = useCart();
+  const { user } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(product.image_url);
   const [added, setAdded] = useState(false);
@@ -33,11 +35,17 @@ export function ProductDetailView({ product, initialReviews }: ProductDetailView
   // Reviews State
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
   const [showReviewForm, setShowReviewForm] = useState(false);
-  const [reviewerName, setReviewerName] = useState('');
+  const [reviewerName, setReviewerName] = useState(user?.name || '');
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewSuccess, setReviewSuccess] = useState(false);
+
+  React.useEffect(() => {
+    if (user && !reviewerName) {
+      setReviewerName(user.name);
+    }
+  }, [user]);
 
   const images = product.images && product.images.length > 0 ? product.images : [product.image_url];
 

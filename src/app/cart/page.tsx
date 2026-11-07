@@ -13,12 +13,17 @@ import {
   ShieldCheck,
   Truck,
   AlertCircle,
-  Dumbbell
+  Dumbbell,
+  UserCheck,
+  ShieldAlert
 } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
+import { useAuth } from '@/lib/auth-context';
+import { GoogleLogo } from '@/components/login-prompt-modal';
 
 export default function CartPage() {
   const router = useRouter();
+  const { user, signInWithGoogle } = useAuth();
   const {
     items,
     removeItem,
@@ -31,13 +36,21 @@ export default function CartPage() {
   } = useCart();
 
   // Form State
-  const [name, setName] = useState('');
+  const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(user?.email || '');
   const [address, setAddress] = useState('');
   const [province, setProvince] = useState('กรุงเทพมหานคร');
   const [postalCode, setPostalCode] = useState('');
   const [note, setNote] = useState('');
+
+  // Auto-fill from user when user logs in
+  React.useEffect(() => {
+    if (user) {
+      if (!name) setName(user.name);
+      if (!email) setEmail(user.email);
+    }
+  }, [user]);
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -240,6 +253,43 @@ export default function CartPage() {
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
               <span>ข้อมูลจัดส่งสินค้า</span>
             </h2>
+
+            {/* Google Login Status or Prompt */}
+            {user ? (
+              <div className="p-3.5 rounded-2xl bg-emerald-950/60 border border-emerald-800/80 text-xs text-emerald-300 flex items-start gap-2.5">
+                <UserCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-white block font-semibold">
+                    สั่งซื้อในนาม: {user.name} ({user.email})
+                  </strong>
+                  <span className="text-slate-400 text-[11px]">
+                    คำสั่งซื้อนี้จะผูกกับบัญชี Google ของท่าน ปลอดภัย ไม่อับสนออเดอร์แน่นอน
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 rounded-2xl bg-amber-950/60 border border-amber-800/80 text-xs space-y-2">
+                <div className="flex items-start gap-2 text-amber-300">
+                  <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-white block font-bold">
+                      คำแนะนำ: เข้าสู่ระบบด้วย Google ก่อนสั่งซื้อ
+                    </strong>
+                    <span className="text-slate-300 text-[11px] leading-relaxed block mt-0.5">
+                      เพื่อไม่ให้ออเดอร์และสลิปสับสน และให้ร้านค้าติดต่อกลับ/แจ้งเลขพัสดุได้ตรงตัว
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => signInWithGoogle()}
+                  className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs flex items-center justify-center gap-2 shadow transition"
+                >
+                  <GoogleLogo />
+                  <span>เข้าสู่ระบบด้วย Google ทันที</span>
+                </button>
+              </div>
+            )}
 
             {errorMsg && (
               <div className="p-3 rounded-xl bg-rose-950/70 border border-rose-800 text-rose-300 text-xs flex items-center gap-2">

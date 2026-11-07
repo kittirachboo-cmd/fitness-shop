@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import { Prompt, Inter } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '@/lib/cart-context';
+import { AuthProvider } from '@/lib/auth-context';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
+import { LoginPromptModal } from '@/components/login-prompt-modal';
 
 const prompt = Prompt({
   subsets: ['latin', 'thai'],
@@ -42,11 +44,14 @@ export default function RootLayout({
   return (
     <html lang="th" className={`${prompt.variable} ${inter.variable}`}>
       <body className="min-h-screen flex flex-col bg-slate-950 text-slate-100 antialiased selection:bg-emerald-500 selection:text-slate-950">
-        <CartProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Navbar />
+            <LoginPromptModal />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

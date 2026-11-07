@@ -112,7 +112,7 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm">
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>089-123-4567</span>
+                <span>093-758-6699</span>
               </li>
               <li className="flex items-center gap-2">
                 <MessageSquare className="w-4 h-4 text-emerald-400 shrink-0" />

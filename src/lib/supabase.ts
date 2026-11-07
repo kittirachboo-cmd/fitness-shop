@@ -1,20 +1,51 @@
 import { createClient } from '@supabase/supabase-js';
-import { Product, Order, Review, ContactInquiry } from './types';
+import { Product, Review } from './types';
 import { MOCK_PRODUCTS, MOCK_REVIEWS } from './mock-data';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+let rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const rawAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const rawServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+// Normalize URL: If user provided ref or publishable key, extract ref from anon key JWT
+if (rawUrl && !rawUrl.startsWith('http')) {
+  if (rawAnonKey && rawAnonKey.includes('.')) {
+    try {
+      const parts = rawAnonKey.split('.');
+      if (parts.length >= 2) {
+        const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf-8'));
+        if (payload?.ref) {
+          rawUrl = `https://${payload.ref}.supabase.co`;
+        }
+      }
+    } catch {
+      // fallback
+    }
+  }
+  if (!rawUrl.startsWith('http')) {
+    rawUrl = `https://${rawUrl}.supabase.co`;
+  }
+}
+
+export const supabaseUrl = rawUrl;
+export const supabaseAnonKey = rawAnonKey;
+export const supabaseServiceRoleKey = rawServiceKey;
 
 export const isSupabaseConfigured = Boolean(
-  supabaseUrl && 
-  supabaseAnonKey && 
+  supabaseUrl &&
+  supabaseUrl.startsWith('http') &&
+  supabaseAnonKey &&
   !supabaseUrl.includes('your-project-id')
 );
 
 // Client-side Supabase instance (anon key)
 export const supabase = isSupabaseConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    })
   : null;
 
 // Server-side Supabase admin instance (service role key)
@@ -49,7 +80,6 @@ export async function getProducts(category?: string): Promise<Product[]> {
 
     const { data, error } = await query;
     if (error || !data || data.length === 0) {
-      console.warn('Supabase getProducts returned empty or error, using mock data:', error?.message);
       if (!category || category === 'all') return MOCK_PRODUCTS;
       return MOCK_PRODUCTS.filter(p => p.category === category);
     }
@@ -83,7 +113,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     }
 
     return data as Product;
-  } catch (err) {
+  } catch {
     return MOCK_PRODUCTS.find(p => p.slug === slug) || null;
   }
 }

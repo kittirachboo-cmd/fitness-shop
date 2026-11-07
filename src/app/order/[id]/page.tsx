@@ -81,7 +81,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
   }
 
   // Generate PromptPay QR
-  const promptpayId = process.env.PROMPTPAY_ID || '0891234567';
+  const promptpayId = process.env.PROMPTPAY_ID || '0937586699';
   let qrDataUrl = '';
   try {
     const ppPayload = promptpayQR(promptpayId, { amount: order.total });
@@ -98,7 +98,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
   }
 
   const bankName = process.env.SHOP_BANK_NAME || 'ธนาคารกสิกรไทย (KBANK)';
-  const bankAccount = process.env.SHOP_BANK_ACCOUNT || '123-2-88990-1';
+  const bankAccount = process.env.SHOP_BANK_ACCOUNT || '1631051061';
   const accountName = process.env.SHOP_ACCOUNT_NAME || 'ร้านอุปกรณ์ออกกำลังกาย IRONPULSE';
 
   return (

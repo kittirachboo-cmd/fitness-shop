@@ -13,11 +13,20 @@ import {
   Sparkles,
   ShieldCheck
 } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 
 export default function ContactPage() {
-  const [name, setName] = useState('');
+  const { user } = useAuth();
+  const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(user?.email || '');
+
+  React.useEffect(() => {
+    if (user) {
+      if (!name) setName(user.name);
+      if (!email) setEmail(user.email);
+    }
+  }, [user]);
   const [subject, setSubject] = useState('ปรึกษาเลือกอุปกรณ์จัด Home Gym ในบ้าน/คอนโด');
   const [message, setMessage] = useState('');
   const [preferredChannel, setPreferredChannel] = useState<'โทรศัพท์' | 'LINE' | 'อีเมล'>('โทรศัพท์');
@@ -282,8 +291,8 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <span className="text-slate-400 block">โทรศัพท์สายด่วน</span>
-                  <a href="tel:0891234567" className="text-sm font-bold text-white hover:text-emerald-400">
-                    089-123-4567
+                  <a href="tel:0937586699" className="text-sm font-bold text-white hover:text-emerald-400">
+                    093-758-6699
                   </a>
                 </div>
               </div>
