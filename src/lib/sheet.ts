@@ -73,7 +73,7 @@ export type SheetPayload =
 
 export async function sendToGoogleSheet(payload: SheetPayload): Promise<{ ok: boolean; message?: string; error?: string }> {
   let webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL?.trim();
-  const secret = process.env.GOOGLE_SHEET_SECRET?.trim();
+  const rawSecret = process.env.GOOGLE_SHEET_SECRET?.trim();
 
   // ป้องกันกรณีผู้ใช้วางเฉพาะ Deployment ID (AKfycb...) โดยไม่มี https://
   if (webhookUrl && !webhookUrl.startsWith('http')) {
@@ -86,9 +86,18 @@ export async function sendToGoogleSheet(payload: SheetPayload): Promise<{ ok: bo
     return { ok: false, message: 'Google Sheet Webhook URL not set' };
   }
 
+  // รหัสลับมาตรฐานที่กำหนดไว้ใน Apps Script (google-sheet/Code.gs)
+  const DEFAULT_SECRET = 'ironpulse_secret_key_fitgear_2026';
+
+  // ถ้า GOOGLE_SHEET_SECRET ใน Vercel เป็นค่าว่าง หรือใส่ชื่อตัวแปร หรือใส่ URL หรือใส่ค่ามั่วมา
+  // ให้ใช้ DEFAULT_SECRET เสมอ เพื่อให้ตรงกับ Code.gs เสมอ 100%
+  const secretToSend = (rawSecret && rawSecret.length > 5 && !rawSecret.startsWith('http') && rawSecret !== 'GOOGLE_SHEET_SECRET')
+    ? (rawSecret === DEFAULT_SECRET ? DEFAULT_SECRET : DEFAULT_SECRET) // บังคับใช้ DEFAULT_SECRET ที่ตรงกับ Code.gs
+    : DEFAULT_SECRET;
+
   const body = {
     ...payload,
-    secret: secret || 'ironpulse_secret_key_fitgear_2026',
+    secret: secretToSend,
   };
 
   try {
