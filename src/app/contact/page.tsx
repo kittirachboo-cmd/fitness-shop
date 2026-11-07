@@ -107,8 +107,8 @@ export default function ContactPage() {
                 <span>กรอกแบบฟอร์มขอให้ติดต่อกลับ</span>
               </h2>
               <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-900/50 flex items-center gap-1">
-                <Sheet className="w-3 h-3" />
-                <span>บันทึกลงชีต &quot;ติดต่อลูกค้ากลับ&quot;</span>
+                <Clock className="w-3 h-3" />
+                <span>ตอบกลับภายใน 24 ชม.</span>
               </span>
             </div>
 
@@ -118,7 +118,7 @@ export default function ContactPage() {
                 <div>
                   <p className="font-bold">ได้รับข้อมูลเรียบร้อยแล้ว!</p>
                   <p className="text-xs text-emerald-400 mt-0.5">
-                    ข้อมูลส่งเข้า Google Sheet และแจ้งเตือนทีมงานแล้ว จะมีเจ้าหน้าที่ติดต่อกลับตามช่องทางที่คุณสะดวกครับ
+                    ทีมงานได้รับข้อความแล้ว จะมีเจ้าหน้าที่ติดต่อกลับตามช่องทางที่คุณสะดวกครับ
                   </p>
                 </div>
               </div>
@@ -271,7 +271,7 @@ export default function ContactPage() {
             </button>
 
             <p className="text-[11px] text-center text-slate-500">
-              *ข้อมูลนี้จะบันทึกเข้าแท็บ &ldquo;ติดต่อลูกค้ากลับ&rdquo; ใน Google Sheet และแจ้งเตือนทีมงานทันที
+              *เจ้าหน้าที่จะติดต่อกลับตามช่องทางและช่วงเวลาที่คุณระบุไว้โดยเร็วที่สุดครับ
             </p>
           </form>
         </div>

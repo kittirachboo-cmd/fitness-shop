@@ -130,15 +130,15 @@ export default function ReviewsPage() {
                 <span>เขียนรีวิวของคุณ</span>
               </h2>
               <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-900/50 flex items-center gap-1">
-                <Sheet className="w-3 h-3" />
-                <span>ซิงค์ลง Google Sheet</span>
+                <Check className="w-3 h-3" />
+                <span>รีวิวจากผู้ใช้จริง</span>
               </span>
             </div>
 
             {success && (
               <div className="p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs flex items-center gap-2">
                 <Check className="w-4 h-4 shrink-0 text-emerald-400" />
-                <span>ขอบคุณสำหรับรีวิว! ข้อมูลถูกส่งเข้า Google Sheet ของร้านเรียบร้อยแล้วครับ</span>
+                <span>ขอบคุณสำหรับรีวิว! ความคิดเห็นของคุณถูกบันทึกเข้าระบบเรียบร้อยแล้วครับ</span>
               </div>
             )}
 
@@ -223,7 +223,7 @@ export default function ReviewsPage() {
             </button>
 
             <p className="text-[11px] text-center text-slate-500">
-              *รีวิวนี้จะถูกส่งไปยัง Google Sheet แท็บ &ldquo;รีวิว&rdquo; ให้เจ้าของร้านดูแลได้ตลอดเวลา
+              *ความคิดเห็นของคุณช่วยให้เพื่อนๆ สมาชิกตัดสินใจเลือกอุปกรณ์ออกกำลังกายได้ดียิ่งขึ้น
             </p>
           </form>
         </div>

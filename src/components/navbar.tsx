@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { useAuth } from '@/lib/auth-context';
-import { OwnerSheetGuide } from './owner-modal';
 import { GoogleLogo } from './login-prompt-modal';
 
 export function Navbar() {
@@ -102,11 +101,6 @@ export function Navbar() {
 
           {/* Right Action Icons: Prominent Google Login + Cart */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Owner Google Sheet Guide Button */}
-            <div className="hidden sm:block">
-              <OwnerSheetGuide />
-            </div>
-
             {/* Prominent Google Auth Section */}
             {!user ? (
               <button
@@ -215,10 +209,7 @@ export function Navbar() {
             );
           })}
 
-          <div className="pt-2 border-t border-slate-800/80 space-y-2">
-            <div className="sm:hidden">
-              <OwnerSheetGuide />
-            </div>
+          <div className="pt-2 border-t border-slate-800/80">
             <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
               <span>โทรสั่งด่วน: 093-758-6699</span>
               <span>LINE: @ironpulse</span>

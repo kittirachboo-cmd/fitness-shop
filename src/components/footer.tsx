@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Dumbbell, ShieldCheck, Truck, Wrench, Sheet, Mail, Phone, MessageSquare } from 'lucide-react';
+import { Dumbbell, ShieldCheck, Truck, Wrench, CreditCard, Mail, Phone, MessageSquare } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -41,11 +41,11 @@ export function Footer() {
 
             <div className="flex items-center gap-3.5 p-3 rounded-xl bg-slate-900/60 border border-slate-800">
               <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-                <Sheet className="w-5 h-5" />
+                <CreditCard className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-white font-semibold text-sm">จัดการผ่าน Google Sheet</p>
-                <p className="text-xs text-slate-400">ร้านดูออเดอร์/สลิปได้ทุกที่</p>
+                <p className="text-white font-semibold text-sm">ชำระเงินสะดวกรวดเร็ว</p>
+                <p className="text-xs text-slate-400">QR พร้อมเพย์ทุกธนาคาร</p>
               </div>
             </div>
           </div>
@@ -66,12 +66,6 @@ export function Footer() {
             <p className="text-slate-400 text-sm max-w-md leading-relaxed">
               ผู้นำเข้าและจำหน่ายอุปกรณ์ออกกำลังกายเกรดพรีเมียม ทั้งระดับ Home Gym และ Commercial สำหรับผู้รักสุขภาพ คอนโด และฟิตเนสทั่วประเทศ มุ่งมั่นคัดสรรอุปกรณ์ที่ทนทาน ปลอดภัย และคุ้มค่าที่สุด
             </p>
-            <div className="pt-2 text-xs text-slate-500">
-              <p>ระบบบริหารจัดการโดย Google Sheet เชื่อมต่อ Supabase Database & Vercel</p>
-              <p className="text-slate-400 mt-1">
-                อีเมลร้านค้า: <span className="text-emerald-400 font-mono">kittirach.boo@tsn.thai-tech.ac.th</span>
-              </p>
-            </div>
           </div>
 
           {/* Navigation Links */}

@@ -183,48 +183,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 4. Owner Google Sheet Highlight Banner */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-slate-950 border border-emerald-800/40 relative overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-8 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold">
-                <Sheet className="w-4 h-4" />
-                <span>Google Sheet Store Integration</span>
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-black text-white">
-                ดูแลร้านง่ายใน Google Sheet ดูได้ทั้งบนมือถือและคอมพิวเตอร์
-              </h3>
-              <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
-                ออเดอร์ใหม่ สลิปโอนเงิน รีวิวจากลูกค้า และคำขอติดต่อกลับ จะถูกส่งเข้า Google Sheet ของร้านทันทีอัตโนมัติ เจ้าของร้าน (<span className="text-emerald-400 font-mono">kittirach.boo@tsn.thai-tech.ac.th</span>) สามารถเปิดเช็กออเดอร์ กดดูสลิป และเปลี่ยนสถานะจัดส่งผ่านมือถือได้ทุกที่ ทุกเวลา!
-              </p>
-              <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-emerald-300">
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" /> แท็บคำสั่งซื้อ + ลิงก์สลิป
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" /> แท็บรีวิวสินค้า (ให้ดาว)
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" /> แท็บติดต่อลูกค้ากลับ
-                </span>
-              </div>
-            </div>
-            <div className="lg:col-span-4 flex justify-center lg:justify-end">
-              <Link
-                href="/api/sheet-test"
-                target="_blank"
-                className="px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm flex items-center gap-2 shadow-lg transition"
-              >
-                <span>ทดสอบเชื่อมต่อ Sheet Webhook</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Customer Reviews Section */}
+      {/* 4. Customer Reviews Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>

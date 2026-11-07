@@ -139,9 +139,9 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
               สถานะปัจจุบัน: <strong className="text-amber-400 font-bold">{order.status}</strong>
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-400">
-            <Sheet className="w-4 h-4 text-emerald-400" />
-            <span>เชื่อมต่อกับ Google Sheet ของร้านอัตโนมัติ</span>
+          <div className="flex items-center gap-1.5 text-emerald-400">
+            <CheckCircle2 className="w-4 h-4" />
+            <span>บันทึกข้อมูลคำสั่งซื้อในระบบเรียบร้อย</span>
           </div>
         </div>
       </div>
