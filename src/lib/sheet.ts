@@ -72,8 +72,14 @@ export type SheetPayload =
   | (BaseSheetPayload & { [key: string]: unknown });
 
 export async function sendToGoogleSheet(payload: SheetPayload): Promise<{ ok: boolean; message?: string; error?: string }> {
-  const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
-  const secret = process.env.GOOGLE_SHEET_SECRET;
+  let webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL?.trim();
+  const secret = process.env.GOOGLE_SHEET_SECRET?.trim();
+
+  // ป้องกันกรณีผู้ใช้วางเฉพาะ Deployment ID (AKfycb...) โดยไม่มี https://
+  if (webhookUrl && !webhookUrl.startsWith('http')) {
+    const cleanId = webhookUrl.replace('/exec', '');
+    webhookUrl = `https://script.google.com/macros/s/${cleanId}/exec`;
+  }
 
   if (!webhookUrl || !webhookUrl.startsWith('http')) {
     console.warn('⚠️ GOOGLE_SHEET_WEBHOOK_URL is not configured. Skipping Sheet sync.');
@@ -92,18 +98,27 @@ export async function sendToGoogleSheet(payload: SheetPayload): Promise<{ ok: bo
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-      // Apps Script อาจใช้เวลา 3-8 วิ
+      redirect: 'follow',
       signal: AbortSignal.timeout(15000),
     });
 
-    if (!res.ok) {
-      const text = await res.text().catch(() => '');
-      console.error('Google Sheet webhook HTTP error:', res.status, text);
-      return { ok: false, error: `HTTP ${res.status}: ${text}` };
+    const text = await res.text().catch(() => '');
+
+    // ตรวจสอบกรณี Google redirect ไปหน้า Login (สิทธิ์ไม่ใช่ Anyone)
+    if (text.includes('ServiceLogin') || text.includes('accounts.google.com') || text.includes('<!DOCTYPE html>')) {
+      return {
+        ok: false,
+        error: 'สิทธิ์ใน Apps Script ยังไม่ใช่ "Anyone": กรุณาไปที่ Apps Script -> Deploy -> Manage deployments -> แก้ Who has access ให้เป็น "Anyone" (ทุกคน) แล้วกด Deploy อีกครั้งครับ',
+      };
     }
 
-    const data = await res.json().catch(() => ({ ok: true }));
-    return data;
+    try {
+      const data = JSON.parse(text);
+      return data;
+    } catch {
+      if (res.ok) return { ok: true };
+      return { ok: false, error: text || `HTTP ${res.status}` };
+    }
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error('Failed to notify Google Sheet:', msg);

@@ -23,9 +23,9 @@ export async function GET(req: NextRequest) {
     const res = await sendToGoogleSheet({ action: 'ping' });
     return NextResponse.json({
       ok: res.ok,
-      message: res.ok ? '✅ เชื่อมต่อ Google Sheet สำเร็จเรียบร้อย!' : 'เชื่อมต่อไม่สำเร็จ',
+      message: res.ok ? '✅ เชื่อมต่อ Google Sheet สำเร็จเรียบร้อย!' : (res.error || 'เชื่อมต่อไม่สำเร็จ'),
       details: res,
-      webhook_url: webhookUrl.replace(/(\/macros\/s\/)[^/]+(\/exec)/, '$1...$2'),
+      webhook_url: webhookUrl,
       owner_email: process.env.OWNER_NOTIFY_EMAIL || 'kittirach.boo@tsn.thai-tech.ac.th',
     });
   } catch (err: unknown) {
